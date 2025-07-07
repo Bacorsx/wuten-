@@ -1,0 +1,158 @@
+# ========================================
+# CONFIGURACIÓN .HTACCESS PARA PRODUCCIÓN
+# ========================================
+# 
+# Este archivo contiene configuraciones optimizadas para producción
+# Incluye headers de seguridad, compresión y caching
+
+# Habilitar compresión GZIP
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# Headers de seguridad
+<IfModule mod_headers.c>
+    # Protección XSS
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Prevenir MIME type sniffing
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # Prevenir clickjacking
+    Header always set X-Frame-Options "DENY"
+    
+    # Referrer Policy
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Permissions Policy
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    
+    # Content Security Policy
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';"
+    
+    # HSTS (HTTP Strict Transport Security)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Cache Control para archivos estáticos
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    
+    # Cache Control para archivos PHP
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+</IfModule>
+
+# Configuración de caché del navegador
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Imágenes
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # CSS y JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/x-javascript "access plus 1 month"
+    
+    # Fuentes
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    
+    # HTML y datos
+    ExpiresByType text/html "access plus 1 hour"
+    ExpiresByType application/json "access plus 1 hour"
+    ExpiresByType application/xml "access plus 1 hour"
+    ExpiresByType text/xml "access plus 1 hour"
+</IfModule>
+
+# Configuración de PHP para producción
+<IfModule mod_php.c>
+    # Configuración de memoria y tiempo
+    php_value memory_limit 256M
+    php_value max_execution_time 30
+    php_value max_input_time 60
+    php_value post_max_size 50M
+    php_value upload_max_filesize 50M
+    
+    # Configuración de sesiones
+    php_value session.cookie_httponly 1
+    php_value session.cookie_secure 1
+    php_value session.use_strict_mode 1
+    php_value session.cookie_samesite "Strict"
+    
+    # Configuración de errores
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_value error_log /var/log/php/error.log
+    
+    # Configuración de seguridad
+    php_flag allow_url_fopen Off
+    php_flag allow_url_include Off
+    php_flag expose_php Off
+</IfModule>
+
+# Protección de archivos sensibles
+<FilesMatch "\.(env|log|sql|bak|backup|old|tmp)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protección de directorios
+<FilesMatch "^(\.htaccess|\.htpasswd|\.git|\.env|config\.php)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Configuración de directorios
+Options -Indexes
+Options -MultiViews
+Options +FollowSymLinks
+
+# Configuración de URL rewriting para API
+RewriteEngine On
+
+# Redirigir HTTP a HTTPS (descomentar en producción con SSL)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Manejo de errores personalizado
+ErrorDocument 404 /backend/error_404.php
+ErrorDocument 500 /backend/error_500.php
+ErrorDocument 403 /backend/error_403.php
+
+# Configuración de rate limiting básico
+<IfModule mod_ratelimit.c>
+    SetOutputFilter RATE_LIMIT
+    SetEnv rate-limit 400
+</IfModule>
+
+# Configuración de logging
+LogLevel warn
+CustomLog /var/log/apache2/access.log combined
+ErrorLog /var/log/apache2/error.log
+
+# Configuración de compresión adicional
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css text/javascript application/javascript application/xml+rss application/json
+</IfModule> 

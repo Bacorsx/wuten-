@@ -1,0 +1,35 @@
+{
+  "timestamp": "2025-07-07T01:53:39.298Z",
+  "ipConfig": {
+    "awsIp": "54.163.209.36",
+    "localIp": "localhost"
+  },
+  "endpoints": [
+    {
+      "endpoint": "Backend Heartbeat",
+      "url": "http://54.163.209.36/wuten-/backend/heartbeat.php",
+      "success": true,
+      "statusCode": 403,
+      "responseTime": 291
+    },
+    {
+      "endpoint": "Backend Root",
+      "url": "http://54.163.209.36/wuten-/backend/",
+      "success": true,
+      "statusCode": 403,
+      "responseTime": 292
+    },
+    {
+      "endpoint": "Frontend Root",
+      "url": "http://54.163.209.36/wuten/",
+      "success": true,
+      "statusCode": 403,
+      "responseTime": 258
+    }
+  ],
+  "summary": {
+    "totalEndpoints": 3,
+    "successfulEndpoints": 3,
+    "failedEndpoints": 0
+  }
+}

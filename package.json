@@ -18,7 +18,10 @@
     "setup:local": "cp env.example .env && echo 'Archivo .env creado para desarrollo local'",
     "setup:aws": "cp env.production.example .env.production && echo 'Archivo .env.production creado. Actualiza VITE_API_URL con tu IP de AWS'",
     "setup:all": "npm run setup:local && npm run setup:aws && echo 'Archivos de entorno creados para desarrollo y producción'",
-    "update-ip": "node scripts/update-ip.js"
+    "update-ip": "node scripts/update-ip.js",
+    "deploy:prod": "bash scripts/deploy-production.sh",
+    "deploy:full": "npm run update-ip && npm run deploy:prod",
+    "check:ip": "node scripts/check-ip.cjs"
   },
   "dependencies": {
     "axios": "^1.6.0",

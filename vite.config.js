@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig(({ command, mode }) => {
   // Cargar variables de entorno según el modo
   const env = loadEnv(mode, process.cwd(), '')
+  const isProduction = mode === 'production'
   
   return {
     plugins: [react()],
@@ -29,25 +30,54 @@ export default defineConfig(({ command, mode }) => {
         }
       }
     },
-    // Configuración para build
+    // Configuración optimizada para producción
     build: {
       outDir: 'dist',
-      sourcemap: mode === 'development',
+      sourcemap: false, // Deshabilitar sourcemaps en producción
+      minify: 'terser', // Usar terser para mejor minificación
+      terserOptions: {
+        compress: {
+          drop_console: isProduction, // Eliminar console.log en producción
+          drop_debugger: isProduction, // Eliminar debugger en producción
+        },
+      },
       rollupOptions: {
         output: {
+          // Separar chunks para mejor caching
           manualChunks: {
             vendor: ['react', 'react-dom'],
             router: ['react-router-dom'],
-            ui: ['bootstrap', 'sweetalert2']
-          }
+            ui: ['bootstrap', 'sweetalert2'],
+            utils: ['axios']
+          },
+          // Optimizar nombres de archivos para caching
+          chunkFileNames: isProduction ? 'assets/js/[name]-[hash].js' : 'assets/js/[name].js',
+          entryFileNames: isProduction ? 'assets/js/[name]-[hash].js' : 'assets/js/[name].js',
+          assetFileNames: isProduction ? 'assets/[ext]/[name]-[hash].[ext]' : 'assets/[ext]/[name].[ext]'
         }
-      }
+      },
+      // Optimizaciones de rendimiento
+      target: 'es2015', // Compatibilidad con navegadores más antiguos
+      cssCodeSplit: true, // Separar CSS
+      reportCompressedSize: false, // Mejorar velocidad de build
+      chunkSizeWarningLimit: 1000 // Aumentar límite de advertencia
     },
     // Configuración de variables de entorno
     define: {
       __APP_VERSION__: JSON.stringify(env.VITE_APP_VERSION || '1.0.0'),
       __APP_TITLE__: JSON.stringify(env.VITE_APP_TITLE || 'Wuten Inmobiliaria'),
-      __APP_ENV__: JSON.stringify(env.VITE_APP_ENV || 'development')
+      __APP_ENV__: JSON.stringify(env.VITE_APP_ENV || 'development'),
+      __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+    },
+    // Optimizaciones adicionales
+    optimizeDeps: {
+      include: ['react', 'react-dom', 'react-router-dom', 'axios', 'bootstrap', 'sweetalert2']
+    },
+    // Configuración de servidor de desarrollo
+    preview: {
+      port: 4173,
+      host: true,
+      strictPort: true
     }
   }
 }) 
