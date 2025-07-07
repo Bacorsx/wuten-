@@ -1,0 +1,2 @@
+# Archivo .htaccess simplificado
+# Los headers CORS se manejan directamente en los archivos PHP 

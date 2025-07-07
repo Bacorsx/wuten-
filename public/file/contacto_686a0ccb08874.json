@@ -1,0 +1,10 @@
+{
+    "id": "686a0ccb08874",
+    "fecha": "2025-07-06 05:42:35",
+    "nombre": "Test User",
+    "email": "test@example.com",
+    "telefono": "+56912345678",
+    "mensaje": "Mensaje de prueba",
+    "id_propiedad": 1,
+    "estado": "nuevo"
+}

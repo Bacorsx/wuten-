@@ -1,0 +1,90 @@
+/* Iconos CSS para la aplicación */
+.icon-bed::before {
+  content: "🛏️";
+}
+
+.icon-bath::before {
+  content: "🚿";
+}
+
+.icon-size::before {
+  content: "📐";
+}
+
+.icon-location::before {
+  content: "📍";
+}
+
+.icon-property::before {
+  content: "🏠";
+}
+
+.icon-check::before {
+  content: "✅";
+}
+
+.icon-compra::before {
+  content: "💰";
+}
+
+.icon-venta::before {
+  content: "🏪";
+}
+
+.icon-arriendo::before {
+  content: "🔑";
+}
+
+.icon-asesoria::before {
+  content: "💼";
+}
+
+.icon-no-results::before {
+  content: "🔍";
+}
+
+/* Iconos alternativos usando Font Awesome o Material Icons */
+.icon-bed {
+  font-family: 'Material Icons';
+  content: "bed";
+}
+
+.icon-bath {
+  font-family: 'Material Icons';
+  content: "bathroom";
+}
+
+.icon-size {
+  font-family: 'Material Icons';
+  content: "straighten";
+}
+
+.icon-location {
+  font-family: 'Material Icons';
+  content: "location_on";
+}
+
+.icon-property {
+  font-family: 'Material Icons';
+  content: "home";
+}
+
+.icon-check {
+  font-family: 'Material Icons';
+  content: "check_circle";
+}
+
+/* Fallback para iconos */
+.icon-bed,
+.icon-bath,
+.icon-size,
+.icon-location,
+.icon-property,
+.icon-check {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  text-align: center;
+  vertical-align: middle;
+} 

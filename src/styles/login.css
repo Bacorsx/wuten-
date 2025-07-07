@@ -1,0 +1,239 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.login-container {
+    font-family: Arial, sans-serif;
+    background-color: azure;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#cajalogin {
+    width: 600px;
+    height: auto;
+    padding: 20px;
+    background-color: #004274;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    margin: 50px auto;
+}
+
+#caja {
+    width: 110px;
+    height: 110px;
+    padding: 5px;
+    background-color: #004274;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    margin: auto;
+    text-align: center;
+}
+
+#iconos {
+    width: 600px;
+    height: 50px;
+    padding: 10px;
+    margin: 20px auto;
+}
+
+#sesion {
+    width: 600px;
+    height: auto;
+    padding: 10px;
+}
+
+.titulo {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: black;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo-box {
+    background-color: white;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.hipervinculos {
+    text-align: center;
+    text-decoration: none;
+    color: #336699;
+    display: block;
+    margin-top: 10px;
+}
+
+.hipervinculos a {
+    color: #336699;
+    text-decoration: none;
+}
+
+.hipervinculos a:hover {
+    text-decoration: underline;
+}
+
+.centrarelementos {
+    text-align: center;
+}
+
+.error-page {
+    min-height: 100vh;
+    background: linear-gradient(45deg, #0d6efd 0%, #0dcaf0 100%);
+}
+
+.error-container {
+    max-width: 600px;
+}
+
+.error-code {
+    font-size: 12rem;
+    font-weight: 900;
+    background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 2s infinite;
+}
+
+.error-message {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.btn-glass {
+    margin-left: 1.5rem;
+    text-decoration: none;
+    color: #004274;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-glass:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+/* Estilo específico para el botón Ingresar */
+#btn.btn-outline-success {
+    border-color: #007bff;
+    background-color: #007bff;
+    color: white;
+}
+
+#btn.btn-outline-success:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    color: white;
+}
+
+#btn.btn-outline-success:disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    cursor: not-allowed;
+}
+
+/* Estilos adicionales para mejorar la apariencia del formulario */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 10px 10px 0 0;
+    padding: 15px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.textoform label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.textoform input[type="email"],
+.textoform input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.textoform input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    border-radius: 0 0 10px 10px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #cajalogin,
+    #iconos {
+        width: 90%;
+        max-width: 500px;
+    }
+    
+    .card-body .row {
+        flex-direction: column;
+    }
+    
+    .col-sm {
+        margin-bottom: 20px;
+    }
+} 
