@@ -31,7 +31,7 @@ print_status "Verificando Node.js..."
 if ! command -v node &> /dev/null; then
     print_error "Node.js no está instalado. Instalando..."
     curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
-    sudo yum install -y nodejs
+    sudo dnf install -y nodejs
 else
     print_status "Node.js ya está instalado: $(node --version)"
 fi
