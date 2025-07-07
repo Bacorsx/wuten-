@@ -2,10 +2,10 @@
 
 ## 📋 Índice
 1. [Requisitos Previos](#requisitos-previos)
-2. [Método 1: Clonación Directa (Recomendado)](#método-1-clonación-directa-recomendado)
-3. [Método 2: Despliegue Automatizado](#método-2-despliegue-automatizado)
-4. [Método 3: Subida Manual con PuTTY](#método-3-subida-manual-con-putty)
-5. [Método 4: Sincronización Automática](#método-4-sincronización-automática)
+2. [Despliegue desde Cero con PuTTY](#despliegue-desde-cero-con-putty)
+3. [Método 1: Clonación Directa (Recomendado)](#método-1-clonación-directa-recomendado)
+4. [Método 2: Despliegue Automatizado](#método-2-despliegue-automatizado)
+5. [Método 3: Subida Manual con PuTTY](#método-3-subida-manual-con-putty)
 6. [Configuración del Servidor](#configuración-del-servidor)
 7. [Verificación y Testing](#verificación-y-testing)
 8. [Mantenimiento](#mantenimiento)
@@ -26,6 +26,90 @@
 - **Archivo de clave privada**: `tu-key.pem` o `tu-key.ppk`
 - **Usuario de la instancia**: `ubuntu` (por defecto)
 - **URL del repositorio**: `https://github.com/Bacorsx/wuten-.git`
+
+---
+
+## 🚀 Despliegue desde Cero con PuTTY
+
+### Paso 1: Conectar con PuTTY
+1. Abre **PuTTY**
+2. **Host Name**: `54.163.209.36`
+3. **Port**: `22`
+4. **Connection type**: `SSH`
+5. **Load tu clave privada** (.ppk) en Connection → SSH → Auth → Private key file
+6. Haz clic en **Open**
+
+### Paso 2: Instalar dependencias del sistema
+```bash
+sudo apt update
+sudo apt install git apache2 -y
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+### Paso 3: Clonar el repositorio
+```bash
+cd /var/www/html
+sudo git clone https://github.com/Bacorsx/wuten-.git wuten
+cd wuten
+```
+
+### Paso 4: Instalar dependencias y construir
+```bash
+npm install
+npm run build:aws
+```
+
+### Paso 5: Configurar permisos
+```bash
+sudo chown -R www-data:www-data /var/www/html/wuten
+sudo chmod -R 755 /var/www/html/wuten
+```
+
+### Paso 6: Configurar Apache
+```bash
+sudo nano /etc/apache2/sites-available/wuten.conf
+```
+
+**Contenido del archivo:**
+```apache
+<VirtualHost *:80>
+    ServerName 54.163.209.36
+    DocumentRoot /var/www/html/wuten/dist
+
+    <Directory /var/www/html/wuten/dist>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/wuten_error.log
+    CustomLog ${APACHE_LOG_DIR}/wuten_access.log combined
+</VirtualHost>
+```
+
+**Para guardar en nano:**
+- Presiona `Ctrl + X`
+- Presiona `Y` para confirmar
+- Presiona `Enter`
+
+### Paso 7: Activar el sitio y reiniciar Apache
+```bash
+sudo a2dissite 000-default.conf
+sudo a2ensite wuten.conf
+sudo systemctl reload apache2
+```
+
+### Paso 8: Verificar el despliegue
+```bash
+ls -la /var/www/html/wuten/dist/
+curl -I http://localhost/wuten/
+```
+
+### Paso 9: Acceder a la aplicación
+Abre en tu navegador:
+```
+http://54.163.209.36/wuten/
+```
 
 ---
 
@@ -200,71 +284,6 @@ ls -la
 
 ---
 
-## 🔄 Método 4: Sincronización Automática
-
-### Paso 1: Crear script de actualización
-```bash
-# Conectar a AWS
-ssh -i tu-key.pem ubuntu@54.163.209.36
-
-# Crear script de actualización
-sudo nano /var/www/html/update-wuten.sh
-```
-
-### Paso 2: Contenido del script
-```bash
-#!/bin/bash
-
-# Script de actualización automática
-echo "Iniciando actualización de Wuten..."
-
-# Navegar al directorio del proyecto
-cd /var/www/html/wuten
-
-# Hacer backup de la versión actual
-sudo cp -r . ../wuten-backup-$(date +%Y%m%d_%H%M%S)
-
-# Actualizar desde Git
-sudo git pull origin main
-
-# Instalar dependencias si es necesario
-if [ -f "package.json" ]; then
-    npm install --production
-fi
-
-# Configurar permisos
-sudo chown -R www-data:www-data .
-sudo chmod -R 755 .
-
-# Limpiar caché de Apache
-sudo systemctl reload apache2
-
-echo "Actualización completada: $(date)"
-```
-
-### Paso 3: Hacer el script ejecutable
-```bash
-sudo chmod +x /var/www/html/update-wuten.sh
-```
-
-### Paso 4: Configurar actualización automática
-```bash
-# Editar crontab
-sudo crontab -e
-
-# Agregar una de estas líneas:
-# Actualizar cada hora
-0 * * * * /var/www/html/update-wuten.sh
-
-# Actualizar cada día a las 2 AM
-0 2 * * * /var/www/html/update-wuten.sh
-
-# Actualizar cada 15 minutos
-*/15 * * * * /var/www/html/update-wuten.sh
-```
-
----
-
 ## ⚙️ Configuración del Servidor
 
 ### Paso 1: Instalar Apache y PHP
@@ -296,10 +315,10 @@ sudo nano /etc/apache2/sites-available/wuten.conf
 <VirtualHost *:80>
     ServerName 54.163.209.36
     ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html/wuten
+    DocumentRoot /var/www/html/wuten/dist
     
     # Configuración de seguridad
-    <Directory /var/www/html/wuten>
+    <Directory /var/www/html/wuten/dist>
         AllowOverride All
         Require all granted
         
@@ -396,7 +415,7 @@ sudo tail -f /var/log/php/error.log
 ls -la /var/www/html/wuten/
 
 # Verificar permisos de archivos críticos
-ls -la /var/www/html/wuten/index.html
+ls -la /var/www/html/wuten/dist/index.html
 ls -la /var/www/html/wuten/backend/
 ```
 
@@ -489,7 +508,7 @@ sudo mysql -u root -p -e "SHOW DATABASES;"
 sudo nano /var/www/html/wuten/backend/config.php
 ```
 
-### Problema: Archivos no se cargan
+### Problema: Archivos no se cargan (404)
 ```bash
 # Verificar configuración de Apache
 sudo apache2ctl configtest
@@ -498,7 +517,10 @@ sudo apache2ctl configtest
 sudo apache2ctl -M
 
 # Verificar permisos de archivos
-ls -la /var/www/html/wuten/
+ls -la /var/www/html/wuten/dist/
+
+# Verificar que el .htaccess esté presente
+ls -la /var/www/html/wuten/dist/.htaccess
 ```
 
 ### Problema: CORS errors
@@ -531,6 +553,30 @@ sudo tail -f /var/log/apache2/access.log
 
 ---
 
+## 🔧 Comandos Útiles en PuTTY
+
+### Navegación y Edición
+- **Copiar**: Selecciona texto con el mouse
+- **Pegar**: Clic derecho en la ventana de PuTTY
+- **Navegar en nano**: Usa las flechas del teclado
+- **Salir de nano**: `Ctrl + X`
+- **Buscar en nano**: `Ctrl + W`
+- **Guardar en nano**: `Ctrl + X`, luego `Y`, luego `Enter`
+
+### Verificación Rápida
+```bash
+# Verificar que la app esté funcionando
+curl -I http://localhost/wuten/
+
+# Verificar estructura de archivos
+ls -la /var/www/html/wuten/dist/
+
+# Verificar logs en tiempo real
+sudo tail -f /var/log/apache2/error.log
+```
+
+---
+
 ## 📞 Soporte y Contacto
 
 ### Información de Contacto
@@ -548,12 +594,14 @@ sudo tail -f /var/log/apache2/access.log
 
 ## 📝 Checklist de Despliegue
 
-- [ ] Conectar a instancia AWS
-- [ ] Instalar dependencias del sistema
-- [ ] Clonar repositorio o subir archivos
-- [ ] Configurar permisos
+- [ ] Conectar a instancia AWS con PuTTY
+- [ ] Instalar dependencias del sistema (Git, Apache, Node.js)
+- [ ] Clonar repositorio desde GitHub
+- [ ] Instalar dependencias del proyecto (npm install)
+- [ ] Construir para producción (npm run build:aws)
+- [ ] Configurar permisos de archivos
 - [ ] Configurar Apache Virtual Host
-- [ ] Configurar base de datos
+- [ ] Configurar base de datos (si es necesario)
 - [ ] Probar endpoints
 - [ ] Verificar logs
 - [ ] Configurar backups
@@ -562,6 +610,16 @@ sudo tail -f /var/log/apache2/access.log
 
 ---
 
+## 🚨 Notas Importantes
+
+1. **IP Dinámica**: Si la IP de AWS cambia, actualiza la configuración localmente y vuelve a desplegar
+2. **Seguridad**: Mantén actualizado el sistema y configura firewall
+3. **Backups**: Configura backups automáticos de archivos y base de datos
+4. **Monitoreo**: Revisa logs regularmente para detectar problemas
+5. **SSL**: Considera configurar HTTPS para producción
+
+---
+
 **Última actualización**: $(date)  
 **Versión**: 1.0.0  
-**Compatible con**: AWS Linux, Ubuntu 20.04+ 
+**Compatible con**: AWS Linux, Ubuntu 20.04+, PuTTY 
