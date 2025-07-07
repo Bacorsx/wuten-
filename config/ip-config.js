@@ -36,11 +36,8 @@ const isProduction = import.meta.env.PROD || import.meta.env.VITE_APP_ENV === 'p
 
 // URL base según el entorno
 export const getBaseUrl = () => {
-  if (isDevelopment) {
-    return `http://${LOCAL_IP}/wuten/backend`;
-  } else {
-    return `http://${AWS_IP}/wuten-/backend`;
-  }
+  // Ahora siempre usa la variable de entorno VITE_API_URL definida en .env.production o .env.local
+  return import.meta.env.VITE_API_URL;
 };
 
 // URL del frontend según el entorno
