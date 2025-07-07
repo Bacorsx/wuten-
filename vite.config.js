@@ -9,6 +9,7 @@ export default defineConfig(({ command, mode }) => {
   
   return {
     plugins: [react()],
+    base: '/wuten/',
     server: {
       port: 3000,
       proxy: {
@@ -41,6 +42,8 @@ export default defineConfig(({ command, mode }) => {
           drop_debugger: isProduction, // Eliminar debugger en producción
         },
       },
+      // Configuración para rutas relativas
+      // base: '/wuten/', // Movido al nivel principal
       rollupOptions: {
         output: {
           // Separar chunks para mejor caching

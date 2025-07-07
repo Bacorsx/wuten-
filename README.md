@@ -1,6 +1,6 @@
-# Wuten Inmobiliaria - React App
+# 🏠 Wuten Inmobiliaria - React App
 
-Esta es la versión React con Vite de la aplicación Wuten Inmobiliaria, migrada desde la versión original en PHP/HTML.
+Esta es la versión React con Vite de la aplicación Wuten Inmobiliaria, migrada desde la versión original en PHP/HTML. **Optimizada para producción con despliegue automatizado en AWS.**
 
 ## 🚀 Características
 
@@ -11,6 +11,9 @@ Esta es la versión React con Vite de la aplicación Wuten Inmobiliaria, migrada
 - **Recuperación de contraseña** con código de verificación
 - **Interfaz moderna** y responsive
 - **Integración con API** backend PHP
+- **Configuración dinámica de IP** para AWS
+- **Despliegue automatizado** con scripts optimizados
+- **Optimizaciones de producción** (minificación, compresión, caching)
 
 ## 📋 Prerrequisitos
 
@@ -18,12 +21,13 @@ Esta es la versión React con Vite de la aplicación Wuten Inmobiliaria, migrada
 - npm o yarn
 - Servidor web local (WAMP, XAMPP, etc.)
 - Backend PHP de Wuten configurado
+- **Para producción:** Instancia AWS Linux
 
 ## 🛠️ Instalación
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Bacorsx/wuten-.git
    cd react-wuten
    ```
 
@@ -61,10 +65,6 @@ Esta es la versión React con Vite de la aplicación Wuten Inmobiliaria, migrada
    VITE_APP_VERSION=1.0.0
    VITE_APP_ENV=production
    ```
-   
-   **📁 Archivos de ejemplo disponibles:**
-   - `env.example` - Plantilla para desarrollo local
-   - `env.production.example` - Plantilla para AWS con checklist de despliegue
 
 4. **Iniciar el servidor de desarrollo:**
    ```bash
@@ -79,40 +79,58 @@ Esta es la versión React con Vite de la aplicación Wuten Inmobiliaria, migrada
 ## 🏗️ Estructura del Proyecto
 
 ```
-src/
-├── api/                 # Servicios de API
-│   └── propiedadesApi.js
-├── components/          # Componentes reutilizables
-│   ├── Navbar.jsx
-│   └── Footer.jsx
-├── config/             # Configuraciones
-│   └── config.js
-├── context/            # Contextos de React
-│   └── AuthContext.jsx
-├── hooks/              # Hooks personalizados
-│   ├── useFiltro.js
-│   └── useUF.js
-├── pages/              # Páginas de la aplicación
-│   ├── Login.jsx
-│   ├── Recuperar.jsx
-│   ├── registro.jsx
-│   ├── Home.jsx
-│   ├── descripcion.jsx
-│   ├── detalle.jsx
-│   ├── Error404.jsx
-│   └── dashboard/
-│       ├── DashboardAdmin.jsx
-│       ├── DashboardGestor.jsx
-│       ├── DashboardPropietario.jsx
-│       ├── AdminUsuarios.jsx
-│       └── AdminPropiedades.jsx
-├── styles/             # Archivos CSS
-│   ├── components.css
-│   ├── login.css
-│   ├── recovery.css
-│   └── error.css
-├── App.jsx             # Componente principal
-└── main.jsx           # Punto de entrada
+react-wuten/
+├── config/              # Configuración centralizada
+│   └── ip-config.js     # Gestión de IPs dinámicas
+├── scripts/             # Scripts de automatización
+│   ├── update-ip.js     # Actualizar IP automáticamente
+│   ├── check-ip.cjs     # Verificar configuración
+│   └── deploy-production.sh # Despliegue automatizado
+├── src/
+│   ├── api/             # Servicios de API
+│   │   └── propiedadesApi.js
+│   ├── components/      # Componentes reutilizables
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   └── SessionNotification.jsx
+│   ├── config/          # Configuraciones
+│   │   ├── config.js
+│   │   └── production.js # Configuración específica de producción
+│   ├── context/         # Contextos de React
+│   │   └── AuthContext.jsx
+│   ├── hooks/           # Hooks personalizados
+│   │   ├── useFiltro.js
+│   │   └── useUF.js
+│   ├── pages/           # Páginas de la aplicación
+│   │   ├── Login.jsx
+│   │   ├── Recuperar.jsx
+│   │   ├── registro.jsx
+│   │   ├── Home.jsx
+│   │   ├── descripcion.jsx
+│   │   ├── detalle.jsx
+│   │   ├── Error404.jsx
+│   │   └── dashboard/
+│   │       ├── DashboardAdmin.jsx
+│   │       ├── DashboardGestor.jsx
+│   │       ├── DashboardPropietario.jsx
+│   │       ├── AdminUsuarios.jsx
+│   │       └── AdminPropiedades.jsx
+│   ├── styles/          # Archivos CSS
+│   │   ├── components.css
+│   │   ├── login.css
+│   │   ├── recovery.css
+│   │   └── error.css
+│   ├── App.jsx          # Componente principal
+│   └── main.jsx         # Punto de entrada
+├── backend/             # Backend PHP
+│   ├── production.config.php # Configuración de producción
+│   └── .htaccess.production  # Configuración Apache para producción
+├── public/              # Archivos estáticos
+├── dist/                # Build de producción (generado)
+├── .env.example         # Plantilla para desarrollo
+├── .env.production      # Variables de producción
+├── vite.config.js       # Configuración de Vite optimizada
+└── package.json         # Dependencias y scripts
 ```
 
 ## 🔐 Usuarios de Prueba
@@ -135,11 +153,17 @@ Para desarrollo, puedes usar estos usuarios simulados:
 
 - **Frontend:**
   - React 18
-  - Vite
+  - Vite 5.4.19
   - React Router DOM
   - Bootstrap 5
   - SweetAlert2
   - Axios
+
+- **Producción:**
+  - Terser (minificación)
+  - Gzip/Brotli (compresión)
+  - Service Workers (caching)
+  - Code Splitting (optimización)
 
 - **Estilos:**
   - CSS3
@@ -166,24 +190,33 @@ Para desarrollo, puedes usar estos usuarios simulados:
 
 ## 🔧 Scripts Disponibles
 
+### 🚀 Desarrollo
 ```bash
-# Desarrollo
 npm run dev              # Desarrollo local
 npm run dev:local        # Desarrollo con modo explícito
 npm run dev:aws          # Desarrollo con configuración AWS
+```
 
-# Construir para producción
+### 🏗️ Construcción
+```bash
 npm run build            # Construcción estándar
 npm run build:dev        # Construcción para desarrollo
 npm run build:prod       # Construcción para producción
-npm run build:aws        # Construcción para AWS
+npm run build:aws        # Construcción optimizada para AWS
+```
 
-# Despliegue
-npm run deploy:aws       # Desplegar a AWS
+### 🚀 Despliegue
+```bash
+npm run deploy:prod      # Despliegue automatizado
+npm run deploy:full      # Despliegue completo (IP + build + deploy)
 npm run preview          # Vista previa estándar
 npm run preview:prod     # Vista previa de producción
+```
 
-# Utilidades
+### 🔧 Utilidades
+```bash
+npm run check:ip         # Verificar configuración de IP
+npm run update-ip        # Actualizar IP automáticamente
 npm run check-env        # Verificar variables de entorno
 npm run setup:local      # Configurar entorno local
 npm run setup:aws        # Configurar entorno AWS
@@ -220,26 +253,6 @@ proxy: {
 - **Desarrollo**: `.env` → `http://localhost/wuten/backend`
 - **Producción**: `.env.production` → `http://TU_IP_AWS/wuten-/backend`
 
-## 📁 Archivos Importantes
-
-- **`src/App.jsx`**: Configuración de rutas y estructura principal
-- **`src/context/AuthContext.jsx`**: Manejo de autenticación
-- **`src/api/propiedadesApi.js`**: Servicios de API
-- **`src/config/config.js`**: Configuraciones globales
-
-## 🚨 Notas Importantes
-
-1. **Backend requerido:** Esta aplicación requiere el backend PHP de Wuten funcionando
-2. **Variables de entorno:** Configura correctamente los archivos `.env` y `.env.production`
-3. **IP Dinámica AWS:** Actualiza `VITE_API_URL` en `.env.production` cuando cambie la IP de tu instancia
-4. **Base de datos:** Asegúrate de que la base de datos esté configurada correctamente
-5. **CORS:** El proxy de Vite maneja los problemas de CORS en desarrollo
-6. **Monitoreo:** Usa el componente `EnvironmentInfo` para verificar la configuración
-
-## 🚀 Despliegue en AWS
-
-Para desplegar en AWS con IPs dinámicas, consulta la [Guía de Despliegue AWS](AWS_DEPLOYMENT_GUIDE.md).
-
 ## 🖥️ Configuración Centralizada de IP
 
 El proyecto incluye un sistema centralizado para gestionar IPs fácilmente:
@@ -247,7 +260,16 @@ El proyecto incluye un sistema centralizado para gestionar IPs fácilmente:
 ### Actualizar IP (Método Rápido)
 ```bash
 # Cambiar IP con un solo comando
+npm run update-ip
+
+# O especificar la IP directamente
 npm run update-ip 54.163.209.36
+```
+
+### Verificar Configuración
+```bash
+# Verificar que todo esté configurado correctamente
+npm run check:ip
 ```
 
 ### Gestión Visual
@@ -256,7 +278,118 @@ import IpConfigManager from './components/IpConfigManager';
 <IpConfigManager show={true} />
 ```
 
-Para más detalles, consulta la [Guía de Configuración de IP](IP_CONFIGURATION.md).
+## 🚀 Despliegue en AWS
+
+### Despliegue Automatizado (Recomendado)
+```bash
+# Despliegue completo con una sola línea
+npm run deploy:full
+```
+
+Este comando:
+1. Actualiza la IP automáticamente
+2. Construye el proyecto optimizado
+3. Prepara archivos para despliegue
+4. Genera script de instalación en servidor
+
+### Despliegue Manual
+```bash
+# 1. Actualizar IP
+npm run update-ip
+
+# 2. Verificar configuración
+npm run check:ip
+
+# 3. Construir para producción
+npm run build:aws
+
+# 4. Ejecutar despliegue
+npm run deploy:prod
+```
+
+### En el Servidor AWS
+```bash
+# Conectar al servidor
+ssh -i tu-key.pem ubuntu@TU_IP_AWS
+
+# Navegar al directorio temporal
+cd /tmp/wuten-build
+
+# Ejecutar script de despliegue
+chmod +x deploy-to-server.sh
+./deploy-to-server.sh
+```
+
+## 📁 Archivos Importantes
+
+- **`config/ip-config.js`**: Configuración centralizada de IPs
+- **`src/App.jsx`**: Configuración de rutas y estructura principal
+- **`src/context/AuthContext.jsx`**: Manejo de autenticación
+- **`src/api/propiedadesApi.js`**: Servicios de API
+- **`src/config/config.js`**: Configuraciones globales
+- **`src/config/production.js`**: Configuración específica de producción
+- **`vite.config.js`**: Configuración optimizada de Vite
+
+## 🔒 Optimizaciones de Producción
+
+### Frontend (Vite)
+- **Code Splitting**: Separación automática de chunks
+- **Tree Shaking**: Eliminación de código no utilizado
+- **Minificación**: Compresión de archivos JS/CSS con Terser
+- **Caching**: Headers de caché optimizados
+- **Compresión**: Gzip/Brotli automática
+
+### Backend (PHP)
+- **Compresión GZIP**: Archivos comprimidos automáticamente
+- **Conexiones Persistentes**: Mejor rendimiento de BD
+- **Rate Limiting**: Protección contra ataques
+- **Headers de Seguridad**: CSP, HSTS, XSS Protection
+
+### Seguridad
+- **Validación de entrada**: Sanitización de datos
+- **CORS configurado**: Orígenes permitidos específicos
+- **Rate limiting**: Protección contra spam
+- **Logging seguro**: Sin información sensible en logs
+
+## 🚨 Notas Importantes
+
+1. **Backend requerido:** Esta aplicación requiere el backend PHP de Wuten funcionando
+2. **Variables de entorno:** Configura correctamente los archivos `.env` y `.env.production`
+3. **IP Dinámica AWS:** Usa `npm run update-ip` cuando cambie la IP de tu instancia
+4. **Base de datos:** Asegúrate de que la base de datos esté configurada correctamente
+5. **CORS:** El proxy de Vite maneja los problemas de CORS en desarrollo
+6. **Monitoreo:** Usa `npm run check:ip` para verificar la configuración
+7. **Backups:** El sistema incluye scripts de backup automático
+
+## 📚 Documentación Adicional
+
+- **[Guía de Despliegue AWS](README_DEPLOYMENT_AWS.md)**: Instrucciones detalladas para AWS
+- **[Guía de Producción](PRODUCTION_GUIDE.md)**: Optimizaciones y configuración de producción
+- **[Configuración de IP](IP_CONFIGURATION.md)**: Gestión de IPs dinámicas
+- **[README para ChatGPT](README_CHATGPT.md)**: Resumen para IA
+
+## 🐛 Troubleshooting
+
+### Error: "terser not found"
+```bash
+npm install --save-dev terser
+```
+
+### Error: "getConfigInfo is not exported"
+Verificar que las rutas de importación sean correctas:
+```javascript
+import { getConfigInfo } from '../../config/ip-config';
+```
+
+### Error: Build falla en producción
+```bash
+# Verificar configuración
+npm run check:ip
+
+# Limpiar y reinstalar
+rm -rf node_modules package-lock.json
+npm install
+```
 
 ## 🤝 Contribución
 
@@ -276,4 +409,8 @@ Para soporte técnico, contacta al equipo de desarrollo de Wuten Inmobiliaria.
 
 ---
 
-**Desarrollado con ❤️ para Wuten Inmobiliaria** 
+**Desarrollado con ❤️ para Wuten Inmobiliaria**
+
+**Versión**: 1.0.0  
+**Última actualización**: $(date)  
+**Compatible con**: Node.js 16+, AWS Linux, Ubuntu 20.04+ 
