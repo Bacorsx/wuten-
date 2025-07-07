@@ -1,5 +1,5 @@
 // Importar configuración centralizada de IP
-import { getBaseUrl, ipConfig } from './ip-config';
+import { getBaseUrl, ipConfig } from '../../config/ip-config';
 
 // Configuración de la aplicación usando variables de entorno de Vite
 export const config = {

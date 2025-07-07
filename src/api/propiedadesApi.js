@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { config, axiosConfig, getApiUrl, isProduction } from '../config/config';
-import { getBaseUrl, getConfigInfo } from '../config/ip-config';
+import { getBaseUrl, getConfigInfo } from '../../config/ip-config';
 
 // Configuración de axios con variables de entorno
 const api = axios.create(axiosConfig);
