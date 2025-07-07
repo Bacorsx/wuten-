@@ -1,11 +1,12 @@
 <?php
-// Configuración de conexión a la base de datos wuten
+// Configuración de conexión a la base de datos wuten con soporte para variables de entorno
 function conectar()
 {
-    $host = "localhost";
-    $usuario = "root";
-    $password = "";
-    $base_datos = "wuten";
+    // Obtener configuración desde variables de entorno o usar valores por defecto
+    $host = getenv('DB_HOST') ?: 'localhost';
+    $usuario = getenv('DB_USER') ?: 'root';
+    $password = getenv('DB_PASSWORD') ?: 'Admin12345';
+    $base_datos = getenv('DB_NAME') ?: 'wuten';
     
     $con = mysqli_connect($host, $usuario, $password, $base_datos);
     
@@ -36,5 +37,31 @@ function obtenerUF()
         'valor' => 35000,
         'fecha' => date('Y-m-d')
     ];
+}
+
+// Función para obtener configuración del entorno
+function getEnvironmentConfig()
+{
+    return [
+        'db_host' => getenv('DB_HOST') ?: 'localhost',
+        'db_name' => getenv('DB_NAME') ?: 'wuten',
+        'db_user' => getenv('DB_USER') ?: 'root',
+        'app_env' => getenv('APP_ENV') ?: 'development',
+        'php_version' => PHP_VERSION,
+        'server_time' => date('Y-m-d H:i:s')
+    ];
+}
+
+// Función para validar conexión a la base de datos
+function testDatabaseConnection()
+{
+    try {
+        $con = conectar();
+        $result = mysqli_query($con, "SELECT 1");
+        mysqli_close($con);
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
 }
 ?> 

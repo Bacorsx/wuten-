@@ -1,22 +1,50 @@
 import axios from 'axios';
-import { config } from '../config/config';
+import { config, axiosConfig, getApiUrl, isProduction } from '../config/config';
+import { getBaseUrl, getConfigInfo } from '../config/ip-config';
 
-// Configuración de axios
-const api = axios.create({
-  baseURL: config.API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// Configuración de axios con variables de entorno
+const api = axios.create(axiosConfig);
 
-// Interceptor para manejar errores
+// Interceptor para manejar errores y reintentos en producción
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     console.error('API Error:', error);
+    
+    // Reintentos automáticos en producción
+    if (isProduction() && error.config && !error.config._retry) {
+      error.config._retry = true;
+      const retryCount = error.config._retryCount || 0;
+      const maxRetries = config.API_RETRY_ATTEMPTS;
+      
+      if (retryCount < maxRetries) {
+        error.config._retryCount = retryCount + 1;
+        console.log(`Reintentando petición (${retryCount + 1}/${maxRetries})`);
+        
+        // Esperar antes del reintento
+        await new Promise(resolve => setTimeout(resolve, config.API_RETRY_ATTEMPTS * 1000));
+        
+        return api.request(error.config);
+      }
+    }
+    
     return Promise.reject(error);
   }
 );
+
+// Interceptor para logging en desarrollo
+if (config.IS_DEV) {
+  api.interceptors.request.use(
+    (config) => {
+      console.log('API Request:', config.method?.toUpperCase(), config.url);
+      return config;
+    },
+    (error) => {
+      console.error('API Request Error:', error);
+      return Promise.reject(error);
+    }
+  );
+}
 
 export const propiedadesApi = {
   // Cargar propiedades
@@ -195,6 +223,17 @@ export const propiedadesApi = {
         { idsectores: 3, nombre_sector: 'Sur', idcomunas: 2 }
       ];
       return sectoresPrueba.filter(s => s.idcomunas == idComuna);
+    }
+  },
+
+  // Verificar configuración del entorno
+  checkEnvironment: async () => {
+    try {
+      const response = await api.get('/check_environment.php');
+      return response.data;
+    } catch (error) {
+      console.error('Error al verificar entorno:', error);
+      throw new Error('Error al verificar configuración del entorno');
     }
   },
 

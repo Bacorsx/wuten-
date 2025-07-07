@@ -34,14 +34,37 @@ Esta es la versión React con Vite de la aplicación Wuten Inmobiliaria, migrada
 
 3. **Configurar variables de entorno:**
    ```bash
-   cp env.example .env
+   # Para desarrollo local
+   npm run setup:local
+   
+   # Para AWS
+   npm run setup:aws
+   
+   # Para ambos entornos
+   npm run setup:all
    ```
    
-   Editar `.env` con tus configuraciones:
+   Editar los archivos según el entorno:
+   
+   **Desarrollo local (.env):**
    ```env
-   VITE_API_BASE_URL=http://localhost/wuten/backend
+   VITE_API_URL=http://localhost/wuten/backend
    VITE_APP_TITLE=Wuten Inmobiliaria
+   VITE_APP_VERSION=1.0.0
+   VITE_APP_ENV=development
    ```
+   
+   **AWS Producción (.env.production):**
+   ```env
+   VITE_API_URL=http://TU_IP_AWS/wuten-/backend
+   VITE_APP_TITLE=Wuten Inmobiliaria
+   VITE_APP_VERSION=1.0.0
+   VITE_APP_ENV=production
+   ```
+   
+   **📁 Archivos de ejemplo disponibles:**
+   - `env.example` - Plantilla para desarrollo local
+   - `env.production.example` - Plantilla para AWS con checklist de despliegue
 
 4. **Iniciar el servidor de desarrollo:**
    ```bash
@@ -145,29 +168,57 @@ Para desarrollo, puedes usar estos usuarios simulados:
 
 ```bash
 # Desarrollo
-npm run dev
+npm run dev              # Desarrollo local
+npm run dev:local        # Desarrollo con modo explícito
+npm run dev:aws          # Desarrollo con configuración AWS
 
 # Construir para producción
-npm run build
+npm run build            # Construcción estándar
+npm run build:dev        # Construcción para desarrollo
+npm run build:prod       # Construcción para producción
+npm run build:aws        # Construcción para AWS
 
-# Vista previa de producción
-npm run preview
+# Despliegue
+npm run deploy:aws       # Desplegar a AWS
+npm run preview          # Vista previa estándar
+npm run preview:prod     # Vista previa de producción
+
+# Utilidades
+npm run check-env        # Verificar variables de entorno
+npm run setup:local      # Configurar entorno local
+npm run setup:aws        # Configurar entorno AWS
 ```
 
-## 🌐 Configuración del Proxy
+## 🌐 Configuración del Proxy y Variables de Entorno
 
-El proyecto está configurado para hacer proxy de las llamadas API al backend PHP:
+El proyecto está configurado para usar variables de entorno y hacer proxy de las llamadas API al backend PHP:
 
+### Variables de Entorno
+```javascript
+// src/config/config.js
+export const config = {
+  API_BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost/wuten/backend',
+  APP_TITLE: import.meta.env.VITE_APP_TITLE || 'Wuten Inmobiliaria',
+  APP_ENV: import.meta.env.VITE_APP_ENV || 'development',
+  // ... más configuraciones
+};
+```
+
+### Proxy Configurado
 ```javascript
 // vite.config.js
 proxy: {
   '/api': {
-    target: 'http://localhost/wuten/backend',
+    target: env.VITE_API_URL || 'http://localhost/wuten/backend',
     changeOrigin: true,
     rewrite: (path) => path.replace(/^\/api/, '')
   }
 }
 ```
+
+### Entornos Soportados
+- **Desarrollo**: `.env` → `http://localhost/wuten/backend`
+- **Producción**: `.env.production` → `http://TU_IP_AWS/wuten-/backend`
 
 ## 📁 Archivos Importantes
 
@@ -179,9 +230,33 @@ proxy: {
 ## 🚨 Notas Importantes
 
 1. **Backend requerido:** Esta aplicación requiere el backend PHP de Wuten funcionando
-2. **Imágenes:** Las imágenes se copian automáticamente desde la versión original
-3. **Base de datos:** Asegúrate de que la base de datos esté configurada correctamente
-4. **CORS:** El proxy de Vite maneja los problemas de CORS en desarrollo
+2. **Variables de entorno:** Configura correctamente los archivos `.env` y `.env.production`
+3. **IP Dinámica AWS:** Actualiza `VITE_API_URL` en `.env.production` cuando cambie la IP de tu instancia
+4. **Base de datos:** Asegúrate de que la base de datos esté configurada correctamente
+5. **CORS:** El proxy de Vite maneja los problemas de CORS en desarrollo
+6. **Monitoreo:** Usa el componente `EnvironmentInfo` para verificar la configuración
+
+## 🚀 Despliegue en AWS
+
+Para desplegar en AWS con IPs dinámicas, consulta la [Guía de Despliegue AWS](AWS_DEPLOYMENT_GUIDE.md).
+
+## 🖥️ Configuración Centralizada de IP
+
+El proyecto incluye un sistema centralizado para gestionar IPs fácilmente:
+
+### Actualizar IP (Método Rápido)
+```bash
+# Cambiar IP con un solo comando
+npm run update-ip 54.163.209.36
+```
+
+### Gestión Visual
+```jsx
+import IpConfigManager from './components/IpConfigManager';
+<IpConfigManager show={true} />
+```
+
+Para más detalles, consulta la [Guía de Configuración de IP](IP_CONFIGURATION.md).
 
 ## 🤝 Contribución
 
